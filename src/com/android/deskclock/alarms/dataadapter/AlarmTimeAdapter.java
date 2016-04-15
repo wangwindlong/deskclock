@@ -53,7 +53,7 @@ public final class AlarmTimeAdapter extends RecyclerView.Adapter<AlarmTimeViewHo
     private Cursor mCursor;
 
     public AlarmTimeAdapter(Context context, Bundle savedState,
-            AlarmTimeClickHandler alarmTimeClickHandler, ScrollHandler smoothScrollController) {
+                            AlarmTimeClickHandler alarmTimeClickHandler, ScrollHandler smoothScrollController) {
         mContext = context;
         mInflater = LayoutInflater.from(context);
         mScrollHandler = smoothScrollController;

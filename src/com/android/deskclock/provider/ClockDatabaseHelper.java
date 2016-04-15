@@ -79,6 +79,7 @@ class ClockDatabaseHelper extends SQLiteOpenHelper {
                 ClockContract.AlarmsColumns.VIBRATE + " INTEGER NOT NULL, " +
                 ClockContract.AlarmsColumns.LABEL + " TEXT NOT NULL, " +
                 ClockContract.AlarmsColumns.RINGTONE + " TEXT, " +
+                ClockContract.AlarmsColumns.ORDER_NO + " TEXT NOT NULL, " +
                 ClockContract.AlarmsColumns.DELETE_AFTER_USE + " INTEGER NOT NULL DEFAULT 0);");
         LogUtils.i("Alarms Table created");
     }
@@ -122,9 +123,10 @@ class ClockDatabaseHelper extends SQLiteOpenHelper {
                 ClockContract.AlarmsColumns.VIBRATE + cs +
                 ClockContract.AlarmsColumns.LABEL + cs +
                 ClockContract.AlarmsColumns.RINGTONE + cs +
+                ClockContract.AlarmsColumns.ORDER_NO + cs +
                 ClockContract.AlarmsColumns.DELETE_AFTER_USE + ") VALUES ";
-        db.execSQL(insertMe + DEFAULT_ALARM_1);
-        db.execSQL(insertMe + DEFAULT_ALARM_2);
+//        db.execSQL(insertMe + DEFAULT_ALARM_1);
+//        db.execSQL(insertMe + DEFAULT_ALARM_2);
     }
 
     @Override
@@ -192,25 +194,24 @@ class ClockDatabaseHelper extends SQLiteOpenHelper {
     }
 
     long fixAlarmInsert(ContentValues values) {
-        // Why are we doing this? Is this not a programming bug if we try to
-        // insert an already used id?
         final SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         long rowId = -1;
         try {
             // Check if we are trying to re-use an existing id.
-            final Object value = values.get(ClockContract.AlarmsColumns._ID);
+            final Object value = values.get(ClockContract.AlarmsColumns.ORDER_NO);
             if (value != null) {
-                long id = (Long) value;
-                if (id > -1) {
-                    final String[] columns = {ClockContract.AlarmsColumns._ID};
-                    final String selection = ClockContract.AlarmsColumns._ID + " = ?";
-                    final String[] selectionArgs = {String.valueOf(id)};
+                String orderno = (String) value;
+                if (!TextUtils.isEmpty(orderno)) {
+                    final String[] columns = {ClockContract.AlarmsColumns.ORDER_NO, ClockContract.AlarmsColumns._ID};
+                    final String selection = ClockContract.AlarmsColumns.ORDER_NO + " = ?";
+                    final String[] selectionArgs = {orderno};
                     try (Cursor cursor = db.query(ALARMS_TABLE_NAME, columns, selection,
                             selectionArgs, null, null, null)) {
                         if (cursor.moveToFirst()) {
                             // Record exists. Remove the id so sqlite can generate a new one.
-                            values.putNull(ClockContract.AlarmsColumns._ID);
+//                            values.putNull(ClockContract.AlarmsColumns._ID);
+                            db.delete(ALARMS_TABLE_NAME, selection, selectionArgs);
                         }
                     }
                 }

@@ -131,6 +131,8 @@ public final class ClockContract {
          * <p>Type: INTEGER</p>
          */
         String DELETE_AFTER_USE = "delete_after_use";
+
+        String ORDER_NO = "order_no";
     }
 
     /**

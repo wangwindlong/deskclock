@@ -57,7 +57,8 @@ public final class Alarm implements Parcelable, ClockContract.AlarmsColumns {
             VIBRATE,
             LABEL,
             RINGTONE,
-            DELETE_AFTER_USE
+            DELETE_AFTER_USE,
+            ORDER_NO
     };
 
     private static final String[] QUERY_ALARMS_WITH_INSTANCES_COLUMNS = {
@@ -70,6 +71,7 @@ public final class Alarm implements Parcelable, ClockContract.AlarmsColumns {
             ClockDatabaseHelper.ALARMS_TABLE_NAME + "." + LABEL,
             ClockDatabaseHelper.ALARMS_TABLE_NAME + "." + RINGTONE,
             ClockDatabaseHelper.ALARMS_TABLE_NAME + "." + DELETE_AFTER_USE,
+            ClockDatabaseHelper.ALARMS_TABLE_NAME + "." + ORDER_NO,
             ClockDatabaseHelper.INSTANCES_TABLE_NAME + "."
                     + ClockContract.InstancesColumns.ALARM_STATE,
             ClockDatabaseHelper.INSTANCES_TABLE_NAME + "." + ClockContract.InstancesColumns._ID,
@@ -95,17 +97,18 @@ public final class Alarm implements Parcelable, ClockContract.AlarmsColumns {
     private static final int LABEL_INDEX = 6;
     private static final int RINGTONE_INDEX = 7;
     private static final int DELETE_AFTER_USE_INDEX = 8;
-    private static final int INSTANCE_STATE_INDEX = 9;
-    public static final int INSTANCE_ID_INDEX = 10;
-    public static final int INSTANCE_YEAR_INDEX = 11;
-    public static final int INSTANCE_MONTH_INDEX = 12;
-    public static final int INSTANCE_DAY_INDEX = 13;
-    public static final int INSTANCE_HOUR_INDEX = 14;
-    public static final int INSTANCE_MINUTE_INDEX = 15;
-    public static final int INSTANCE_LABEL_INDEX = 16;
-    public static final int INSTANCE_VIBRATE_INDEX = 17;
+    private static final int ORDER_NO_INDEX = 9;
+    private static final int INSTANCE_STATE_INDEX = 10;
+    public static final int INSTANCE_ID_INDEX = 11;
+    public static final int INSTANCE_YEAR_INDEX = 12;
+    public static final int INSTANCE_MONTH_INDEX = 13;
+    public static final int INSTANCE_DAY_INDEX = 14;
+    public static final int INSTANCE_HOUR_INDEX = 15;
+    public static final int INSTANCE_MINUTE_INDEX = 16;
+    public static final int INSTANCE_LABEL_INDEX = 17;
+    public static final int INSTANCE_VIBRATE_INDEX = 18;
 
-    private static final int COLUMN_COUNT = DELETE_AFTER_USE_INDEX + 1;
+    private static final int COLUMN_COUNT = ORDER_NO_INDEX + 1;
     private static final int ALARM_JOIN_INSTANCE_COLUMN_COUNT = INSTANCE_VIBRATE_INDEX + 1;
 
     public static ContentValues createContentValues(Alarm alarm) {
@@ -121,6 +124,7 @@ public final class Alarm implements Parcelable, ClockContract.AlarmsColumns {
         values.put(VIBRATE, alarm.vibrate ? 1 : 0);
         values.put(LABEL, alarm.label);
         values.put(DELETE_AFTER_USE, alarm.deleteAfterUse);
+        values.put(ORDER_NO, alarm.orderNo);
         if (alarm.alert == null) {
             // We want to put null, so default alarm changes
             values.putNull(RINGTONE);
@@ -253,6 +257,7 @@ public final class Alarm implements Parcelable, ClockContract.AlarmsColumns {
     public boolean deleteAfterUse;
     public int instanceState;
     public int instanceId;
+    public String orderNo;
 
     // Creates a default alarm at the current time.
     public Alarm() {
@@ -279,6 +284,7 @@ public final class Alarm implements Parcelable, ClockContract.AlarmsColumns {
         vibrate = c.getInt(VIBRATE_INDEX) == 1;
         label = c.getString(LABEL_INDEX);
         deleteAfterUse = c.getInt(DELETE_AFTER_USE_INDEX) == 1;
+        orderNo = c.getString(ORDER_NO_INDEX);
 
         if (c.getColumnCount() == ALARM_JOIN_INSTANCE_COLUMN_COUNT) {
             instanceState = c.getInt(INSTANCE_STATE_INDEX);
